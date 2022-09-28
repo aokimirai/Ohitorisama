@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Yourpage
+{% endblock %}
+
+{% block main %}
+    {% for user in users %}
+        {% if user.icon != None %}
+            <img src=../upload/iconimg/{{ user.icon }} width="20%" class="icon">
+        {% endif %}
+        <p>ニックネーム：{{ user.display_name }}</p>
+        <p>フォロー数：{{ user.follow }}</p>
+        <p>フォロワー数：{{ user.follower }}</p>
+        <hr>
+    {% endfor %}
+    {% for post in posts %}
+    <div>
+        <p>投稿日時：{{ post.posted_at }}</p>
+        <p>{{ post.post_text }}</p>
+        <p>行った日：{{ post.go_on }}</p>
+    </div>
+    <hr class="dash">
+    {% endfor %}
+{% endblock %}

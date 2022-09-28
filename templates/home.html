@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+    {% if posts|length < 1 %}
+        <p>投稿がありません</p>
+    {% endif %}
+    {% for post in posts %}
+        <div class="info">
+            <div class="user">
+                <img src=../upload/iconimg/{{ post.icon }} class="posticon">
+                <p style="display:inline-block">{{ post.display_name }}</p>
+            </div>
+            <div class="posttime">
+                <p>投稿日時：{{ post.posted_at }}</p>
+            </div>
+        </div>
+        <div class="contents">
+            {% if post.go_on != None %}
+                <p class="goon">{{ post.go_on }}</p>
+            {% endif %}
+            {% if post.photo_path != None %}
+                <img src=../upload/postimg/{{ post.photo_path }} width="40%" style="margin-bottom: 10px;">
+            {% endif %}
+            <p>{{ post.post_text }}</p>
+        </div>
+        <hr class="dash">
+    {% endfor %}
+{% endblock %}

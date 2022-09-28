@@ -1,0 +1,113 @@
+body {
+    background: url("./background.gif")
+}
+
+p {
+    white-space: pre-wrap;
+}
+
+.title{
+    font-family: Century;
+    font-size: xxx-large;
+}
+
+
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
+
+/* Mypagedisplay */
+.icon {
+    width: 20%;       /* ※縦横を同値に */
+    height: 20%;       /* ※縦横を同値に */
+    border-radius: 50%;  /* 角丸半径を50%にする(=円形にする) */
+    background-position: center center;
+    margin-bottom: 10px;
+}
+.follow {
+    display: inline-flex;
+}
+.createtime {
+    font-size: small;
+}
+/* postdisplay */
+.dash {
+        height: 3px;
+        border-width: 0;
+        background-color: #f3ecec;
+        background-image: -webkit-linear-gradient(right,
+        #ddd6d6 5px,#855454 5px);
+        background-image: linear-gradient(-90deg,
+        #ddd6d6 5px,#855454 5px);
+        background-size: 10px 10px;
+    }
+.info {
+    display: inline-flex;
+    width: 50%;
+}
+.user {
+    text-align: left;
+    width: 50%
+}
+.user p {
+    vertical-align: middle;
+}
+.posticon {
+    width: 5%;       /* ※縦横を同値に */
+    border-radius: 50%;  /* 角丸半径を50%にする(=円形にする) */
+    background-position: center center;
+    margin-bottom: 10px;
+}
+.posttime {
+    font-size: small;
+    width: 50%;
+}
+.posttime p {
+    text-align: right;
+}
+.contents {
+    width: 70%;
+    margin: 0 auto;
+}
+.goon {
+    font-weight: bold;
+}
+
+/* formdisplay */
+.form-textarea {
+    height: 300px;
+    width: 70%;
+    padding: 4px 16px;
+    border-radius: 4px;
+    border: none;
+    box-shadow: 0 0 0 1px #ccc inset;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    resize: vertical;
+}
+
+.form-textarea:focus {
+    outline: 0;
+    box-shadow: 0 0 0 2px rgb(33, 150, 243) inset;
+}
+
+.form-date {
+    width:40%;
+}
+
+/* set display */
+.comment {
+    height: 100px;
+    width: 50%;
+    padding: 4px 16px;
+    border-radius: 4px;
+    border: none;
+    box-shadow: 0 0 0 1px #ccc inset;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    resize: vertical;
+}

@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Post
+{% endblock %}
+
+{% block main %}
+    <form action="/post" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <p>行った日</p>
+            <input name="goon" type="date" value="YYYY-MM-DD" class="form=date">
+        </div>
+        <p>写真</p>
+        <div class="mb-3">
+            <input class="form-control" type="file" name="imgfile" accept=".jpg,.gif,.png,image/gif,image/jpeg,image/png" style="width:50%; display:revert">
+        </div>
+        <div class="mb-3">
+            <p>投稿内容</p>
+            <textarea name="text" class="form-textarea" placeholder="投稿内容を入力してください"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">投稿</button>
+    </form>
+{% endblock %}

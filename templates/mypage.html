@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Mypage
+{% endblock %}
+
+{% block main %}
+
+
+    {% for user in users %}
+        {% if user.icon != None %}
+            <img src=../upload/iconimg/{{ user.icon }} width="20%" class="icon">
+        {% else %}
+            <img src=../upload/iconimg/icon-default.png width="20%" class="icon">
+        {% endif %}
+        <p>ニックネーム：{{ user.display_name }}</p>
+        <p class="createtime">アカウント作成：{{ user.created_at }}</p>
+        <p>{{ user.comment }}</p>
+        <!--
+        <div class="follow">
+            <p style="margin-right:10px;">フォロー数：{{ user.follow }}</p>
+            <p>フォロワー数：{{ user.follower }}</p>
+        </div>
+        -->
+        <a class="btn btn-outline-secondary" href="/set" role="button" style="display:block">プロフィール設定</a>
+        <hr>
+    {% endfor %}
+
+    {% if posts|length < 1 %}
+        <p>投稿がありません</p>
+    {% endif %}
+
+    {% for post in posts %}
+        <div class="info">
+            <p class="posttime">投稿日時：{{ post.posted_at }}</p>
+        </div>
+            {% if post.go_on != None %}
+                <p class="goon">{{ post.go_on }}</p>
+            {% endif %}
+            {% if post.photo_path != None %}
+                <img src=../upload/postimg/{{ post.photo_path }} width="40%" style="margin-bottom: 10px;">
+            {% endif %}
+            <p>{{ post.post_text }}</p>
+        <hr class="dash">
+    {% endfor %}
+
+
+{% endblock %}
