@@ -11,21 +11,21 @@
     {% for post in posts %}
         <div class="info">
             <div class="user">
-                <img src=../upload/iconimg/{{ post.icon }} class="posticon">
-                <p style="display:inline-block">{{ post.display_name }}</p>
+                <img src="../upload/iconimg/{{ post[6]}}" class="posticon">
+                <p style="display:inline-block">{{ post[5] }}</p>
             </div>
             <div class="posttime">
-                <p>投稿日時：{{ post.posted_at }}</p>
+                <p>投稿日時：{{ post[3] }}</p>
             </div>
         </div>
         <div class="contents">
-            {% if post.go_on != None %}
-                <p class="goon">{{ post.go_on }}</p>
+            {% if post[0] != None %}
+                <p class="goon">{{ post[0]}}</p>
             {% endif %}
-            {% if post.photo_path != None %}
-                <img src=../upload/postimg/{{ post.photo_path }} width="40%" style="margin-bottom: 10px;">
+            {% if post[2] != None %}
+                <img src="../upload/postimg/{{ post[2] }}" width="40%" style="margin-bottom: 10px;">
             {% endif %}
-            <p>{{ post.post_text }}</p>
+            <p>{{ post[1] }}</p>
         </div>
         <hr class="dash">
     {% endfor %}

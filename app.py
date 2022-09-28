@@ -43,7 +43,7 @@ def after_request(response):
 @app.route("/")
 @login_required
 def index():
-    return redirect("/register")
+    return redirect("/home")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -96,8 +96,11 @@ def post():
             filepath = datetime.now().strftime("%Y%m%d_%H%M%S_") \
             + werkzeug.utils.secure_filename(img.filename)
             img.save(os.path.join(app.config['UPLOAD_FOLDER'] + '/postimg', filepath))
-
-        db.execute("INSERT INTO posts (userid,go_on,post_text,photo_path) VALUES(?,?,?,?)",userid,goon,text,filepath)
+        con = sqlite3.connect("./ohitori.db")
+        db = con.cursor()
+        db.execute("INSERT INTO posts (userid,go_on,post_text,photo_path) VALUES(?,?,?,?)",(userid,goon,text,filepath,))
+        con.commit()
+        con.close()
         return redirect("/")
     else:
         return render_template("post.html")
@@ -109,7 +112,11 @@ def handle_over_max_file_size(error):
 
 @app.route("/home")
 def home():
-    posts = db.execute("SELECT go_on,post_text,photo_path,posted_at,like,users.display_name AS display_name,users.icon AS icon FROM posts JOIN users ON posts.userid = users.userid ORDER BY posted_at DESC")
+    con = sqlite3.connect("./ohitori.db")
+    db = con.cursor()
+    posts = db.execute("SELECT go_on,post_text,photo_path,posted_at,like,users.display_name AS display_name,users.icon AS icon FROM posts JOIN users ON posts.userid = users.id ORDER BY posted_at DESC").fetchall()
+    con.close()
+    print(posts)
     return render_template("home.html",posts=posts)
 
 
