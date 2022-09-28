@@ -6,6 +6,7 @@ from helpers import apology, login_required
 import werkzeug
 from datetime import datetime
 import sqlite3
+import re
 
 app = Flask(__name__, static_folder='upload')
 
@@ -30,6 +31,10 @@ def db(ope):
     con.close()
     return db
 
+def password_check(password):
+    if len(password) >= 6 and (re.search('[A-Z]', password) or re.search('[a-z]', password)) and re.search('[0-9]', password):
+        return True
+    return False
 
 @app.after_request
 def after_request(response):
@@ -41,7 +46,7 @@ def after_request(response):
 
 
 @app.route("/")
-@login_required
+# @login_required
 def index():
     return redirect("/home")
 
@@ -116,7 +121,6 @@ def home():
     db = con.cursor()
     posts = db.execute("SELECT go_on,post_text,photo_path,posted_at,like,users.display_name AS display_name,users.icon AS icon FROM posts JOIN users ON posts.userid = users.id ORDER BY posted_at DESC").fetchall()
     con.close()
-    print(posts)
     return render_template("home.html",posts=posts)
 
 
@@ -184,17 +188,16 @@ def register():
         # パスワードが入力されていない
         elif not password:
             return apology("パスワードを入力してください", 400)
+        elif password_check(password) == False:
+            return apology("英数字を一文字以上含んだ6文字以上のパスワードを入力してください")
         # パスワードが一致しない
         elif password != request.form.get("confirmation"):
             return apology("パスワードが一致しません", 400)
-        con.close()
         password = generate_password_hash(password)
-        # データベースに入れる
-        con = sqlite3.connect('./ohitori.db')
-        db = con.cursor()
         db.execute("INSERT INTO users (username, hash) VALUES(?, ?)", (username, password))
         con.commit()
         con.close()
+
         #メッセージ
         flash("登録が完了しました")
         # ログインページに送る

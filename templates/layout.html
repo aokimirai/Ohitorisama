@@ -38,6 +38,11 @@
                             <li class="nav-item"><a class="nav-link" href="/logout">ログアウト</a></li>
                         </ul>
                     {% else %}
+                        <ul class="navbar-nav me-auto mt-2">
+                            <li class="nav-item"><a class="nav-link" href="/home">ホーム</a></li>
+                            <li class="nav-item"><a class="nav-link" id="post">投稿</a></li>
+                            <li class="nav-item"><a class="nav-link" id="mypage">マイページ</a></li>
+                        </ul>
                         <ul class="navbar-nav ms-auto mt-2">
                             <li class="nav-item"><a class="nav-link" href="/register">新規登録</a></li>
                             <li class="nav-item"><a class="nav-link" href="/login">ログイン</a></li>
@@ -55,8 +60,33 @@
             </header>
         {% endif %}
 
+        <div class="alert alert-primary mb-0 text-center hidden" id="auth">
+            登録してからご利用いただけます。
+        </div>
+        <script>
+            const post = document.getElementById('post');
+            const mypage = document.getElementById('mypage');
+            const auth = document.getElementById('auth');
+
+            function hidden() {
+                auth.classList.toggle('hidden');
+            }
+
+            post.addEventListener('click', () => {
+                clearTimeout(close);
+                hidden()
+                close = setTimeout(hidden, 2000)
+            });
+            mypage.addEventListener('click', () => {
+                clearTimeout(close);
+                hidden()
+                close = setTimeout(hidden, 2000)
+            });
+        </script>
+
         <main class="container-fluid py-5 text-center">
-            {% block main %}{% endblock %}
+            {% block main %}
+            {% endblock %}
         </main>
     </body>
 

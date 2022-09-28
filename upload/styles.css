@@ -11,6 +11,10 @@ p {
     font-size: xxx-large;
 }
 
+.hidden {
+    display: none;
+}
+
 
 /* Size for brand */
 nav .navbar-brand
@@ -32,6 +36,7 @@ nav .navbar-brand
 .createtime {
     font-size: small;
 }
+
 /* postdisplay */
 .dash {
         height: 3px;
