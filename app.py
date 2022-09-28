@@ -1,28 +1,34 @@
 import os
-
-from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session
-from flask_session import Session
+from flask_session.__init__ import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import apology, login_required
 import werkzeug
 from datetime import datetime
+import sqlite3
 
 app = Flask(__name__, static_folder='upload')
 
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
+
+# Configure session to use filesystem (instead of signed cookies)
+# ファイルシステムを使用するようにセッションを構成します (署名付き Cookie の代わりに)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
-
-db = SQL("sqlite:///ohitori.db")
 
 # 画像のアップロード
 UPLOAD_POST_FOLDER = './upload'
 ALLOWED_EXTENSIONS = set(['.jpg','.gif','.png','image/gif','image/jpeg','image/png'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_POST_FOLDER
-count = 0
+
+def db(ope):
+    con = sqlite3.connect('./ohitori.db')
+    db = con.cursor()
+    db = db.execute(ope)
+    con.close()
+    return db
 
 
 @app.after_request
@@ -37,33 +43,40 @@ def after_request(response):
 @app.route("/")
 @login_required
 def index():
-    return redirect("/home")
+    return redirect("/register")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """Log user in"""
+    #　ユーザーidをクリアする
     session.clear()
-
+    username = request.form.get("username")
+    password = request.form.get("password")
+    # POSTの場合
     if request.method == "POST":
+        # ユーザーネームが入力されていない
+        if not username:
+            return apology("ユーザーネームを入力してください", 403)
+        # パスワードが入力されていない
+        elif not password:
+            return apology("パスワードを入力してください", 403)
 
-        if not request.form.get("username"):
-            return apology("must provide username", 403)
-
-        elif not request.form.get("password"):
-            return apology("must provide password", 403)
-
-        username = request.form.get("username")
-        rows = db.execute("SELECT * FROM users WHERE username = ?", username)
-
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid username and/or password", 403)
-
-        session["user_id"] = rows[0]["id"]
-
-        if db.execute("SELECT userid FROM users WHERE username = ?",username)[0]["userid"] == 0:
-            db.execute("UPDATE users SET userid=(?) WHERE username=(?)",session["user_id"],username)
-
-        return redirect("/mypage")
+        con = sqlite3.connect('./ohitori.db')
+        db = con.cursor()
+        db.execute("SELECT * FROM users WHERE username = ?", (username,))
+        users = db.fetchone()
+        con.close()
+        # ユーザーネームとパスワードが正しいか確認
+        if users != None:
+            if check_password_hash(users[2], password):
+                # ユーザーを記憶する
+                session["user_id"] = users[0]
+                #メッセージ
+                flash("ログインしました")
+                return redirect("/mypage")
+            else:
+                return apology("パスワードが無効です", 403)
+        else:
+            return apology("ユーザネームが無効です", 403)
 
     else:
         return render_template("login.html")
@@ -106,8 +119,11 @@ def mypage():
         return redirect("/")
     else:
         userid = session["user_id"]
-        users = db.execute("SELECT display_name,icon,comment,created_at,follow,follower FROM users WHERE userid = (?)", userid)
-        posts = db.execute("SELECT go_on,post_text,photo_path,posted_at,like FROM posts WHERE userid = (?) ORDER BY posted_at DESC", userid)
+        con = sqlite3.connect('./ohitori.db')
+        db = con.cursor()
+        users = db.execute("SELECT display_name,icon,comment,created_at FROM users WHERE id = ?", (userid,)).fetchall()
+        posts = db.execute("SELECT go_on,post_text,photo_path,posted_at,like FROM posts WHERE userid = ? ORDER BY posted_at DESC", (userid,)).fetchall()
+        con.close()
         return render_template("mypage.html",posts=posts,users=users)
 
 
@@ -117,42 +133,64 @@ def set():
         userid = session["user_id"]
         nickname = request.form.get("nickname")
         comment = request.form.get("comment")
-        if db.execute("SELECT icon FROM users WHERE userid = ?",userid)[0]["icon"] == None:
+        con = sqlite3.connect("./ohitori.db")
+        db = con.cursor()
+        users = db.execute("SELECT icon FROM users WHERE id = ?",(userid,)).fetchone()
+        if users[0] == None:
             filepath=None
         else:
-            filepath=db.execute("SELECT icon FROM users WHERE userid = ?",userid)[0]["icon"]
+            filepath=db.execute("SELECT icon FROM users WHERE id = ?",userid)[0]["icon"]
 
         img = request.files['imgfile']
         if img:
             filepath = datetime.now().strftime("%Y%m%d_%H%M%S_") \
             + werkzeug.utils.secure_filename(img.filename)
             img.save(os.path.join(app.config['UPLOAD_FOLDER'] + '/iconimg', filepath))
-
-        db.execute("UPDATE users SET display_name=(?), icon=(?), comment=(?) WHERE userid=(?)",nickname,filepath,comment,userid)
+        
+        db.execute("UPDATE users SET display_name=?, icon=?, comment=? WHERE id=?",(nickname,filepath,comment,userid,))
+        con.commit()
+        con.close()
         return redirect("/mypage")
     else:
         userid = session["user_id"]
-        users = db.execute("SELECT display_name,icon,comment FROM users WHERE userid = (?)", userid)
+        con = sqlite3.connect("./ohitori.db")
+        db = con.cursor()
+        users = db.execute("SELECT display_name,icon,comment FROM users WHERE id = (?)", (userid,)).fetchall()
         return render_template("set.html",users=users)
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    """Register user"""
     if request.method == "POST":
-        # 入力を受け取る
+        # ユーザーネームが入力されていない
         username = request.form.get("username")
         password = request.form.get("password")
-        confirmation = request.form.get("confirmation")
-        # ユーザ名の被りを確かめる
-        users = int(db.execute("SELECT COUNT(username) as username FROM users where username=(?)", username)[0]["username"])
-        # 名前のカウントが1以上、パスワードが再入力と異なる、入力されていないものがある場合
-        if users >= 1 or password != confirmation or not username or not password or not confirmation:
-            return apology("COULDN'T REGISTER", 400)
-        # パスワードをハッシュ化する
+        if not username:
+            return apology("ユーザーネームを入力してください", 400)
+        # ユーザーネームが既に使われている
+        con = sqlite3.connect('./ohitori.db')
+        db = con.cursor()
+        db.execute("SELECT * FROM users where username=?", (username,))
+        user = db.fetchone()
+        if user != None:
+            return apology("このユーザーネームは既に使われています", 400)
+        # パスワードが入力されていない
+        elif not password:
+            return apology("パスワードを入力してください", 400)
+        # パスワードが一致しない
+        elif password != request.form.get("confirmation"):
+            return apology("パスワードが一致しません", 400)
+        con.close()
         password = generate_password_hash(password)
-        # usersにそれぞれのデータを入れる
-        db.execute("INSERT INTO users (username,hash) VALUES(?,?)", username,password)
+        # データベースに入れる
+        con = sqlite3.connect('./ohitori.db')
+        db = con.cursor()
+        db.execute("INSERT INTO users (username, hash) VALUES(?, ?)", (username, password))
+        con.commit()
+        con.close()
+        #メッセージ
+        flash("登録が完了しました")
+        # ログインページに送る
         return redirect("/login")
     else:
         return render_template("register.html")

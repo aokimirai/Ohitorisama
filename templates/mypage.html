@@ -8,20 +8,14 @@
 
 
     {% for user in users %}
-        {% if user.icon != None %}
-            <img src=../upload/iconimg/{{ user.icon }} width="20%" class="icon">
+        {% if user[1] != None %}
+            <img src="./upload/iconimg/{{ user[1] }}" width="20%" class="icon">
         {% else %}
-            <img src=../upload/iconimg/icon-default.png width="20%" class="icon">
+            <img src="./upload/iconimg/icon-default.png" width="20%" class="icon">
         {% endif %}
-        <p>ニックネーム：{{ user.display_name }}</p>
-        <p class="createtime">アカウント作成：{{ user.created_at }}</p>
-        <p>{{ user.comment }}</p>
-        <!--
-        <div class="follow">
-            <p style="margin-right:10px;">フォロー数：{{ user.follow }}</p>
-            <p>フォロワー数：{{ user.follower }}</p>
-        </div>
-        -->
+        <p>ニックネーム：{{ user[0] }}</p>
+        <p class="createtime">アカウント作成：{{ user[3] }}</p>
+        <p>{{ user[2] }}</p>
         <a class="btn btn-outline-secondary" href="/set" role="button" style="display:block">プロフィール設定</a>
         <hr>
     {% endfor %}
@@ -32,15 +26,15 @@
 
     {% for post in posts %}
         <div class="info">
-            <p class="posttime">投稿日時：{{ post.posted_at }}</p>
+            <p class="posttime">投稿日時：{{ post[0] }}</p>
         </div>
-            {% if post.go_on != None %}
-                <p class="goon">{{ post.go_on }}</p>
+            {% if post[0] != None %}
+                <p class="goon">{{ post[0] }}</p>
             {% endif %}
-            {% if post.photo_path != None %}
-                <img src=../upload/postimg/{{ post.photo_path }} width="40%" style="margin-bottom: 10px;">
+            {% if post[2] != None %}
+                <img src="../upload/postimg/{{ post[2] }}" width="40%" style="margin-bottom: 10px;">
             {% endif %}
-            <p>{{ post.post_text }}</p>
+            <p>{{ post[1] }}</p>
         <hr class="dash">
     {% endfor %}
 
