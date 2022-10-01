@@ -46,13 +46,12 @@ def after_request(response):
 
 
 @app.route("/")
-# @login_required
 def index():
-    return redirect("/home")
+    return render_template("index.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    #　ユーザーidをクリアする
+    # ユーザーidをクリアする
     session.clear()
     username = request.form.get("username")
     password = request.form.get("password")
