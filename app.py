@@ -105,7 +105,7 @@ def post():
         db.execute("INSERT INTO posts (userid,go_on,post_text,photo_path) VALUES(?,?,?,?)",(userid,goon,text,filepath,))
         con.commit()
         con.close()
-        return redirect("/")
+        return redirect("/home")
     else:
         return render_template("post.html")
 
@@ -126,7 +126,7 @@ def home():
 @app.route("/mypage", methods=["GET", "POST"])
 def mypage():
     if request.method == "POST":
-        return redirect("/")
+        return redirect("/home")
     else:
         userid = session["user_id"]
         con = sqlite3.connect('./ohitori.db')
