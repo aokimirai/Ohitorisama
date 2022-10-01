@@ -150,7 +150,7 @@ def set():
         if users[0] == None:
             filepath=None
         else:
-            filepath=db.execute("SELECT icon FROM users WHERE id = ?",userid)[0]["icon"]
+            filepath=db.execute("SELECT icon FROM users WHERE id = ?",(userid,)).fetchall()[0][0]
 
         img = request.files['imgfile']
         if img:
