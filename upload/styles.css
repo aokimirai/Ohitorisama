@@ -58,14 +58,18 @@ nav .navbar-brand
 }
 .session h2{
     clear: both;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
     font-size: 2.25rem;
     letter-spacing: 0.1em;
-    padding-top: 20px;
+    padding-top: 50px;
 }
 
 .session p {
     letter-spacing: 0.1em;
+}
+
+.session span {
+    border-bottom: double #28a745;
 }
 
 .button {
@@ -75,6 +79,7 @@ nav .navbar-brand
 .button img {
     display: block;
     margin: auto;
+    width: 30%;
 }
 .button a {
     margin: 20px 0px;

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# website: http://ogp.me/ns/website#">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,16 +10,21 @@
     <link href="/upload/favicon.ico" rel="icon">
 
     <link href="/upload/styles.css" rel="stylesheet">
-    <title>Ohitorisama</title>
+    <title>Ohitorisama</title>    
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ohitoriapp.herokuapp.com/" />
+    <meta property="og:image" content="https://d.kuku.lu/419fd4cc1" />
+    <meta property="og:site_name" content="Ohitorisama" />
+    <meta property="og:description" content="一人旅記録共有サービス" />
 </head>
 <body>
     <div class="first">
-        <img src="../upload/umi-M.jpg" class="umi">
+        <img src="../upload/umi.jpg" class="umi">
         <h1 class="index-title century">Ohitorisama</h1>
         <p class="dis">一人旅共有サービス</p>
     </div>
     <div class="session">
-        <h2 class="century">Register/Login</h2>
+        <h2 class="century"><span>Register/Login</span></h2>
         <div class="button">
             <img src="../upload/register.png">
             <a href="/register" role="button" class="btn btn-success">新規登録</a>
@@ -30,7 +35,7 @@
         </div>
     </div>
     <div class="session">
-        <h2 class="century">Discription</h2>
+        <h2 class="century"><span>Discription</span></h2>
         <p>このサービスは一人で出かけたことを</p>
         <p>共有、記録することができます。</p>
         <p>一人で出かけたその記録、</p>
@@ -39,8 +44,8 @@
         <a href="/home" role="button" class="btn btn-success">覗いてみる</a>
     </div>
     <div class="session">
-        <h2 class="century">News</h2>
-        <p>2022/10/01 サービスをリリースしました</p>
+        <h2 class="century"><span>News</span></h2>
+        <p>2022/10/01 サービスをプレリリースしました</p>
     </div>
     <footer class="mb-5 small text-center text-muted">
         &copy; 2022 aoki
