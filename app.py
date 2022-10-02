@@ -18,7 +18,6 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 # Configure session to use filesystem (instead of signed cookies)
 # ファイルシステムを使用するようにセッションを構成します (署名付き Cookie の代わりに)
-
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -62,16 +61,12 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    # ユーザーidをクリアする
     session.clear()
     username = request.form.get("username")
     password = request.form.get("password")
-    # POSTの場合
     if request.method == "POST":
-        # ユーザーネームが入力されていない
         if not username:
             return apology("ユーザーネームを入力してください", 403)
-        # パスワードが入力されていない
         elif not password:
             return apology("パスワードを入力してください", 403)
 
@@ -80,12 +75,9 @@ def login():
         db.execute("SELECT * FROM users WHERE username = ?", (username,))
         users = db.fetchone()
         con.close()
-        # ユーザーネームとパスワードが正しいか確認
         if users != None:
             if check_password_hash(users[2], password):
-                # ユーザーを記憶する
                 session["user_id"] = users[0]
-                #メッセージ
                 flash("ログインしました")
                 return redirect("/mypage")
             else:
@@ -183,34 +175,27 @@ def set():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        # ユーザーネームが入力されていない
         username = request.form.get("username")
         password = request.form.get("password")
         if not username:
             return apology("ユーザーネームを入力してください", 400)
-        # ユーザーネームが既に使われている
         con = sqlite3.connect('./ohitori.db')
         db = con.cursor()
         db.execute("SELECT * FROM users where username=?", (username,))
         user = db.fetchone()
         if user != None:
             return apology("このユーザーネームは既に使われています", 400)
-        # パスワードが入力されていない
         elif not password:
             return apology("パスワードを入力してください", 400)
         elif password_check(password) == False:
             return apology("英数字を一文字以上含んだ6文字以上のパスワードを入力してください")
-        # パスワードが一致しない
         elif password != request.form.get("confirmation"):
             return apology("パスワードが一致しません", 400)
         password = generate_password_hash(password)
         db.execute("INSERT INTO users (username, hash) VALUES(?, ?)", (username, password))
         con.commit()
         con.close()
-
-        #メッセージ
         flash("登録が完了しました")
-        # ログインページに送る
         return redirect("/login")
     else:
         return render_template("register.html")
@@ -218,12 +203,7 @@ def register():
 
 @app.route("/logout")
 def logout():
-    """Log user out"""
-
-    # sessionを削除する
     session.clear()
-
-    # ログインフォームに移動する
     return redirect("/")
 
 
