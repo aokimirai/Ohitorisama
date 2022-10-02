@@ -7,6 +7,7 @@
 {% block main %}
     <h1 class="title">Ohitorisama</h1>
     <form action="/register" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="mb-3">
             <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="ユーザID" type="text" requied>
         </div>

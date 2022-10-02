@@ -6,6 +6,7 @@
 
 {% block main %}
     <form action="/post" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="mb-3">
             <p>行った日</p>
             <input name="goon" type="date" value="YYYY-MM-DD" class="form=date">

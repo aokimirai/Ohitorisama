@@ -6,6 +6,7 @@
 
 {% block main %}
     <form action="/set" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
         {% for user in users %}
             <div class="mb-3">
