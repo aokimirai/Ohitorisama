@@ -9,10 +9,9 @@ import sqlite3
 import re
 from flask_wtf.csrf import CSRFProtect
 
-csrf = CSRFProtect
 
 app = Flask(__name__, static_folder='upload')
-csrf.init_app(app)
+csrf = CSRFProtect(app)
 
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
@@ -227,3 +226,5 @@ def logout():
     # ログインフォームに移動する
     return redirect("/")
 
+
+csrf.init_app(app)
