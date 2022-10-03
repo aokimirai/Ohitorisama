@@ -56,7 +56,11 @@ def after_request(response):
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    try:
+        if session["user_id"]:
+            return redirect("/home")
+    except:
+        return render_template("index.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
