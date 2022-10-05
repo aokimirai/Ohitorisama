@@ -1,6 +1,5 @@
 # FLATTO
 #### Url: https://ohitoriapp.herokuapp.com/
-
 <br>
 
 # アプリの説明
