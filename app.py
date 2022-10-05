@@ -174,6 +174,14 @@ def set():
         users = db.execute("SELECT display_name,icon,comment FROM users WHERE id = (?)", (userid,)).fetchall()
         return render_template("set.html",users=users)
 
+@app.route("/showpage", methods=["GET", "POST"])
+def showpage():
+    if request.method == "POST":
+        return redirect("/home")
+    else:
+        return render_template("showpage.html")
+
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
