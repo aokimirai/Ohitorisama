@@ -26,15 +26,23 @@
 
     {% for post in posts %}
         <div class="info">
-            <p class="posttime">投稿日時：{{ post[0] }}</p>
+            <p class="posttime">投稿日時：{{ post[5] }}</p>
         </div>
-            {% if post[0] != None %}
-                <p class="goon">{{ post[0] }}</p>
-            {% endif %}
             {% if post[2] != None %}
-                <img src="../upload/postimg/{{ post[2] }}" width="40%" style="margin-bottom: 10px;">
+                <p class="goon">{{ post[2] }}</p>
             {% endif %}
-            <p>{{ post[1] }}</p>
+            {% if post[4] != None %}
+                <img src="../upload/postimg/{{ post[4] }}" width="40%" style="margin-bottom: 10px;">
+            {% endif %}
+            <p>{{ post[3] }}</p>
+        <div>
+            <form action="/mypage" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input name="postid" value="{{ post[0] }}" class="hidden">
+                <button class="btn btn-secondary" value="rewrite" type="submit" name="action">編集</button>
+                <button class="btn btn-secondary" value="delete" type="submit" name="action">削除</button>
+            </form>
+        </div>
         <hr class="dash">
     {% endfor %}
 

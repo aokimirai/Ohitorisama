@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    投稿編集
+{% endblock %}
+
+{% block main %}
+    <form action="/repost" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        {% for post in posts %}
+        <input name="postid" value="{{ post[0] }}" class="hidden">
+        <input name="filepath" value="{{ post[4] }}" class="hidden">
+        <div class="mb-3">
+            <p>投稿カテゴリ</p>
+            <select name="cate" id="pulldown">
+                <option value="0">選択してください</option>
+                <option value="1">旅行</option>
+                <option value="2">ドライブ</option>
+                <option value="3">散歩</option>
+                <option value="4">趣味</option>
+                <option value="5">その他</option>
+            </select>
+        </div>
+        <script>
+          function select_checked() {
+            obj = document.getElementById('pulldown').options;
+            val = "{{ post[7] }}"
+            for(var i=0;i<obj.length;i++){
+              if(obj[i].value==val){
+                obj[i].selected=true;
+                break;
+              }
+            }
+          }
+          window.onload = function() {
+	          select_checked();
+          };
+        </script>
+        <div class="mb-3">
+            <p>行った日</p>
+            <input name="goon" type="date" value="{{ post[2] }}" class="form=date">
+        </div>
+        <p>写真</p>
+        <div class="mb-3">
+            <img src="../upload/postimg/{{ post[4] }}" width="40%" style="margin-bottom: 10px;">
+            <input class="form-control" type="file" name="imgfile" accept=".jpg,.gif,.png,image/gif,image/jpeg,image/png" style="width:50%; display:revert" value="{{ post[4] }}">
+        </div>
+        <div class="mb-3">
+            <p>投稿内容</p>
+            <textarea name="text" class="form-textarea">{{ post[3] }}</textarea>
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary" type="submit">再投稿</button>
+    </form>
+{% endblock %}

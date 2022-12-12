@@ -96,6 +96,7 @@ def login():
 def post():
     if request.method == "POST":
         userid = session["user_id"]
+        cate = request.form.get("cate")
         goon = request.form.get("goon")
         if len(goon) < 4:
             goon=None
@@ -108,12 +109,39 @@ def post():
             img.save(os.path.join(app.config['UPLOAD_FOLDER'] + '/postimg', filepath))
         con = sqlite3.connect("./ohitori.db")
         db = con.cursor()
-        db.execute("INSERT INTO posts (userid,go_on,post_text,photo_path) VALUES(?,?,?,?)",(userid,goon,text,filepath,))
+        db.execute("INSERT INTO posts (userid,go_on,post_text,photo_path,cate) VALUES(?,?,?,?)",(userid,goon,text,filepath,cate,))
         con.commit()
         con.close()
         return redirect("/home")
     else:
         return render_template("post.html")
+
+@app.route("/repost", methods=["GET", "POST"])
+def repost():
+    if request.method == "POST":
+        postid = request.form.get("postid")
+        cate = request.form.get("cate")
+        text = request.form.get("text")
+        goon = request.form.get("goon")
+        filepath = request.form.get("filepath")
+        
+        if len(goon) < 4:
+            goon=None
+        # fileの変更があったら変更できるようにする
+        img = request.files['imgfile']
+        if img:
+            filepath = datetime.now().strftime("%Y%m%d_%H%M%S_") \
+            + werkzeug.utils.secure_filename(img.filename)
+            img.save(os.path.join(app.config['UPLOAD_FOLDER'] + '/postimg', filepath))
+        con = sqlite3.connect('./ohitori.db')
+        db = con.cursor()
+        db.execute("UPDATE posts SET go_on=?, post_text=?, cate=? WHERE id=?",(goon,text,cate,postid,))
+        con.commit()
+        con.close()
+        return redirect("/mypage")
+    else:
+        return render_template("repost.html")
+
 
 @app.errorhandler(werkzeug.exceptions.RequestEntityTooLarge)
 def handle_over_max_file_size(error):
@@ -132,13 +160,29 @@ def home():
 @app.route("/mypage", methods=["GET", "POST"])
 def mypage():
     if request.method == "POST":
-        return redirect("/home")
+        action = request.form.get('action')
+        postid = request.form.get("postid")
+        if action == "rewrite":
+            con = sqlite3.connect('./ohitori.db')
+            db = con.cursor()
+            posts = db.execute("SELECT * FROM posts WHERE id = ?",(postid,)).fetchall()
+            con.close()
+            return render_template("repost.html",posts=posts)
+        elif action == "del":
+            con = sqlite3.connect('./ohitori.db')
+            db = con.cursor()
+            db.execute("DELETE FROM posts WHERE id = ?",(postid,))
+            con.commit()
+            con.close()
+            return redirect("/mypage")
+        else:
+            return redirect("/mypage")
     else:
         userid = session["user_id"]
         con = sqlite3.connect('./ohitori.db')
         db = con.cursor()
         users = db.execute("SELECT display_name,icon,comment,created_at FROM users WHERE id = ?", (userid,)).fetchall()
-        posts = db.execute("SELECT go_on,post_text,photo_path,posted_at,like FROM posts WHERE userid = ? ORDER BY posted_at DESC", (userid,)).fetchall()
+        posts = db.execute("SELECT * FROM posts WHERE userid = ? ORDER BY posted_at DESC", (userid,)).fetchall()
         con.close()
         return render_template("mypage.html",posts=posts,users=users)
 
