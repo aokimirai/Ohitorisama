@@ -1,4 +1,4 @@
-# FLATTO
+# Ohitorisama
 #### Url: https://ohitoriapp.herokuapp.com/
 <br>
 
