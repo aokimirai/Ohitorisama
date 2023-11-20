@@ -1,4 +1,4 @@
-import os
+import os, json
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session.__init__ import Session
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -9,8 +9,9 @@ import sqlite3
 import re
 from flask_wtf.csrf import CSRFProtect
 
-
 app = Flask(__name__, static_folder='upload')
+
+
 csrf = CSRFProtect(app)
 
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -109,7 +110,7 @@ def post():
             img.save(os.path.join(app.config['UPLOAD_FOLDER'] + '/postimg', filepath))
         con = sqlite3.connect("./ohitori.db")
         db = con.cursor()
-        db.execute("INSERT INTO posts (userid,go_on,post_text,photo_path,cate) VALUES(?,?,?,?)",(userid,goon,text,filepath,cate,))
+        db.execute("INSERT INTO posts (userid,go_on,post_text,photo_path,cate) VALUES(?,?,?,?,?)",(userid,goon,text,filepath,cate,))
         con.commit()
         con.close()
         return redirect("/home")
@@ -148,13 +149,23 @@ def handle_over_max_file_size(error):
     print("werkzeug.exceptions.RequestEntityTooLarge")
     return 'result : file size is overed.'
 
-@app.route("/home")
+@app.route("/home", methods=["GET", "POST"])
 def home():
-    con = sqlite3.connect("./ohitori.db")
-    db = con.cursor()
-    posts = db.execute("SELECT go_on,post_text,photo_path,posted_at,like,users.display_name AS display_name,users.icon AS icon FROM posts JOIN users ON posts.userid = users.id ORDER BY posted_at DESC").fetchall()
-    con.close()
-    return render_template("home.html",posts=posts)
+    # カテゴリーで絞って検索する(場所検索もできたらいいなという構想)
+    if request.method == "POST":
+        cate = request.form.get('cate')
+        con = sqlite3.connect("./ohitori.db")
+        db = con.cursor()
+        posts = db.execute("SELECT go_on,post_text,photo_path,posted_at,like,users.display_name AS display_name,users.icon AS icon FROM posts JOIN users ON posts.userid = users.id WHERE cate=? ORDER BY posted_at DESC",(cate,)).fetchall()
+        con.close()
+        return render_template("home.html",post=posts)
+    else:
+        con = sqlite3.connect("./ohitori.db")
+        db = con.cursor()
+        posts = db.execute("SELECT go_on,post_text,photo_path,posted_at,like,users.display_name AS display_name,users.icon AS icon FROM posts JOIN users ON posts.userid = users.id ORDER BY posted_at DESC").fetchall()
+        print(posts)
+        con.close()
+        return render_template("home.html",posts=posts)
 
 
 @app.route("/mypage", methods=["GET", "POST"])

@@ -5,6 +5,19 @@
 {% endblock %}
 
 {% block main %}
+
+    <div>
+        <!--form でflask にデータを渡す-->
+        <p>カテゴリで絞る</p>
+        <select name="cate" id="pulldown">
+            <option value="0">選択してください</option>
+            <option value="1">旅行</option>
+            <option value="2">ドライブ</option>
+            <option value="3">散歩</option>
+            <option value="4">趣味</option>
+            <option value="5">その他</option>
+        </select>
+    </div>
     {% if posts|length < 1 %}
         <p>投稿がありません</p>
     {% endif %}
